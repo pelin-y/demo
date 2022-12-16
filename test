@@ -1,1 +1,209 @@
+import turtle
+import time
+import random as rand
+
+bgcolor = "wheat" #default color
+# setup windows
+wn = turtle.Screen()
+wn.title("Demo Drawing")
+wn.setup(width=600, height=800)
+wn.tracer(0)
+
+
+pencil = turtle.Turtle()
+
+score = 0    
+
+
+
+#setup turtle
+
+
+
+pencil.penup()
+pencil.speed(0)
+pencil.shape("square") #circle, triangle
+pencil.setundobuffer(None)
+pencil.clear()
+
+
+
+def rightscore(x, y):    
+    pencil.goto(x, y)
+    pencil.color("black")
+    pencil.hideturtle()
+    
+    pencil.write("Score: {}".format(score), move=False, align="left", font=("Arial", 24, "normal"))
+
+rightscore(-100, 360)
+
+
+pencil.color("white")   # "lightblue"
+
+
+speedList = ["slow","medium","fast"]
+speedNum = 0.08 #default(slowest) speed
+bgcolorList = ["brown", "green", "blue", "pink"]
+
+backgroundcolor = input("Select a background color (Brown, Green, Blue, Pink):  ")
+backgroundcolor = backgroundcolor.lower()
+
+while backgroundcolor not in bgcolorList:
+    backgroundcolor = input("Invalid color. Try again. (Brown, Green, Blue, Pink):  ")
+    backgroundcolor = backgroundcolor.lower()
+
+if backgroundcolor == "brown":   
+    bgcolor = "wheat"
+    #wn.bgcolor("wheat")
+elif backgroundcolor == "green":
+    bgcolor = "pale green"
+    # wn.bgcolor("pale green")
+elif backgroundcolor == "blue":
+    bgcolor = "light blue"
+    # wn.bgcolor("light blue")
+elif backgroundcolor == "pink":
+    bgcolor = "lavender blush"
+    # wn.bgcolor("lavender blush")
+
+
+# for debugging
+#print("bgcolor: " + bgcolor)
+
+
+wn.bgcolor(bgcolor)
+
+
+speed = input("Select Speed (Slow, Medium, Fast):  ")
+speed = speed.lower()
+
+print(speed)
+while speed not in speedList:
+    speed = input("Invalid speed. Try again. (Slow, Medium, Fast):  ")
+    speed = speed.lower()
+
+
+if speed == "slow":
+    speedNum = 0.08
+elif speed == "medium":
+    speedNum = 0.06
+elif speed == "fast":
+    speedNum = 0.03
+
+print(str(speedNum))
+
+
+
+moveLeftFlag = False
+moveRightFlag = False
+
+top = 340
+left = -110
+leftMove = 20
+
+
+color = "white"
+
+def deleteshape(columns, rows, color, position):
+   
+    pencil.color(color)     
+    for j in range(columns):
+        for i in range(rows):            
+            #print("D x:" + str((left + (i*20))) + " y:" + str((top -  ((j*20) + (position*20)))) + " pos:" + str(position))
+            pencil.goto((left + (i*20)), (top -  ((j*20) + (position*20)))) # x, y
+            #pencil.goto(pleft, (ptop - (position*20))) # x, y
+            pencil.stamp() # draw 
+
+
+    leftShadow = 0       
+
+            # time.sleep(0.02) # 1/5 second
+
+def drawshape(columns, rows, color, position):
+    global pleft
+    global ptop
+   
+    pencil.color(color) 
+    for j in range(columns):
+        for i in range(rows):
+            #print("P x:" + str((left + (i*20))) + " y:" + str((top -  ((j*20) + (position*20)))) + " pos:" + str(position))            
+            
+            #pencil.goto(pleft, (ptop - (position*20))) # x, y
+            pencil.goto((left + (i*20)), (top -  ((j*20) + (position*20)))) # x, y
+            pencil.stamp() # draw 
+
+circleList = ["0,100", "150,250", "-210,300", "-250,-300", "200, -300", "-250, -100", "160, -100"]
+
+for circle in circleList:
+    xy_vals = circle.split(',')
+    xval = float(xy_vals[0])
+    yval = float(xy_vals[1])
+    print(str(xval) + " " + str(yval))
+    
+    pencil.penup()
+    pencil.goto(xval, yval)
+    pencil.pendown()
+    pencil.circle(10)
+
+pencil.penup()
+
+gameNotOver = True
+
+def moveLeft():    
+    global moveLeftFlag            
+    moveLeftFlag = True
+   
+
+def moveRight():    
+    global moveRightFlag     
+    moveRightFlag = True
+  
+
+end = turtle.Turtle()
+def quit():
+    global gameNotOver, pencil
+    gameNotOver = False
+    pencil.clear()
+    game = "gameover.gif"
+    wn.addshape(game)
+    end.shape(game)
+    end.hideturtle()
+    end.goto(-100,0)
+    end.showturtle()
+    end.stamp()
+    
+
+y = -50
+for i in range(5):
+    end.penup()
+    end.goto(0, y)
+    y += 20
+wn.update()
+
+
+wn.listen()
+wn.onkeypress(lambda: moveLeft(), "d")
+wn.onkeypress(lambda: moveRight(), "a")
+wn.onkeypress(lambda: quit(), "q")
+
+while gameNotOver:
+    score += 1
+    for t in range(35):
+        if(moveLeftFlag):            
+            left = left + 20
+            moveLeftFlag = False
+        if(moveRightFlag):
+            left = left - 20
+            moveRightFlag = False
+
+        
+        drawshape(2, 2, "white", t)
+        wn.update() 
+        time.sleep(speedNum)  #0.08       
+        deleteshape(2, 2, bgcolor, t)
+        #deleteshape(2, 2, "lavender blush", t)
+        if not gameNotOver:
+            break
+  
+rightscore(-100, -350)
+wn.mainloop()
 
